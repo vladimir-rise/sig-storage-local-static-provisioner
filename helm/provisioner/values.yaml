@@ -26,6 +26,10 @@ useJobForCleaning: false
 # name will only use Node.Name.
 useNodeNameOnly: false
 
+# Set Provisioner Name, override the default Provisioner name and useNodeNameOnly
+# config
+# provisionerName: local-volume-provisioner
+
 # Resync period in reflectors will be random between minResyncPeriod and
 # 2*minResyncPeriod. Default: 5m0s.
 #minResyncPeriod: 5m0s

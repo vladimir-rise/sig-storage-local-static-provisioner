@@ -37,6 +37,11 @@ data:
 {{- if .Values.useNodeNameOnly }}
   useNodeNameOnly: "true"
 {{- end }}
+{{- if .Values.provisionerName }}
+  provisionerName: {{ .Values.provisionerName }}
+{{- else }}
+  provisionerName: {{ (include "provisioner.name" .) | quote }}
+{{- end }}
 {{- if .Values.minResyncPeriod }}
   minResyncPeriod: {{ .Values.minResyncPeriod | quote }}
 {{- end }}

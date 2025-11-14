@@ -95,10 +95,15 @@ func StartLocalController(signal *signal, client *kubernetes.Clientset, ptable d
 	jobControllerStopChan := make(chan struct{})
 
 	var provisionerName string
-	if config.UseNodeNameOnly {
-		provisionerName = fmt.Sprintf("local-volume-provisioner-%v", config.Node.Name)
+
+	if config.ProvisionerName != "" {
+		provisionerName = config.ProvisionerName
 	} else {
-		provisionerName = fmt.Sprintf("local-volume-provisioner-%v-%v", config.Node.Name, config.Node.UID)
+		if config.UseNodeNameOnly {
+			provisionerName = fmt.Sprintf("local-volume-provisioner-%v", config.Node.Name)
+		} else {
+			provisionerName = fmt.Sprintf("local-volume-provisioner-%v-%v", config.Node.Name, config.Node.UID)
+		}
 	}
 
 	broadcaster := record.NewBroadcaster()

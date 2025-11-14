@@ -115,6 +115,8 @@ type UserConfig struct {
 	// UseNodeNameOnly indicates if Node.Name should be used in the provisioner name
 	// instead of Node.UID.
 	UseNodeNameOnly bool
+	// ProvisionerName specifies the unique name of the provisioner responsible for managing the storage resources.
+	ProvisionerName string
 	// LabelsForPV stores additional labels added to provisioned PVs
 	LabelsForPV map[string]string
 	// SetPVOwnerRef indicates if PVs should be dependents of the owner Node
@@ -240,6 +242,9 @@ type ProvisionerConfiguration struct {
 	// ProvisionerNotReadyNodeTaintKey is the key of the startup taint that provisioner will remove once it becomes ready.
 	// +optional
 	ProvisionerNotReadyNodeTaintKey string `json:"provisionerNotReadyNodeTaintKey" yaml:"provisionerNotReadyNodeTaintKey"`
+	// ProvisionerName specifies the name of the provisioner managing the storage resources.
+	// +optional
+	ProvisionerName string `json:"provisionerName" yaml:"provisionerName"`
 }
 
 // CreateLocalPVSpec returns a PV spec that can be used for PV creation
@@ -422,6 +427,7 @@ func UserConfigFromProvisionerConfig(node *v1.Node, namespace, jobImage string, 
 		UseJobForCleaning:               config.UseJobForCleaning,
 		MinResyncPeriod:                 config.MinResyncPeriod,
 		UseNodeNameOnly:                 config.UseNodeNameOnly,
+		ProvisionerName:                 config.ProvisionerName,
 		Namespace:                       namespace,
 		JobContainerImage:               jobImage,
 		JobTolerations:                  config.JobTolerations,

@@ -23,12 +23,14 @@ jobs:
           export DOCKER_CLI_EXPERIMENTAL=enabled
           export OUTPUT_TYPE=docker
           make build-container-linux-amd64
+          make build-container-linux-arm64
 
       - name: Save Docker image to tar
         run: |
           docker ps
           docker images          
           docker save test/local-volume-provisioner:latest_linux_amd64 -o local-volume-provisioner_latest_linux_amd64.tar
+          docker save test/local-volume-provisioner:latest_linux_arm64 -o local-volume-provisioner_latest_linux_arm64.tar
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
@@ -38,12 +40,32 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      - name: Upload Docker image artifact (arm64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-volume-provisioner-image-linux-arm64
+          path: local-volume-provisioner_latest_linux_arm64.tar
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         env:
           TRIVY_DB_REPOSITORY: "public.ecr.aws/aquasecurity/trivy-db:2"
         with:
           image-ref: 'test/local-volume-provisioner:latest_linux_amd64'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW,UNKNOWN'
+
+      - name: Run Trivy vulnerability scanner (arm64)
+        uses: aquasecurity/trivy-action@master
+        env:
+          TRIVY_DB_REPOSITORY: "public.ecr.aws/aquasecurity/trivy-db:2"
+        with:
+          image-ref: 'test/local-volume-provisioner:latest_linux_arm64'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
